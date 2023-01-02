@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    // Für Spock
+    id 'groovy'
+    id 'org.springframework.boot' version '3.0.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+    //Für Pitest
+    id 'info.solidsoft.pitest' version '1.9.0'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 17
+
+//configurations {
+//    compileOnly {
+//        extendsFrom annotationProcessor
+//    }
+//}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Für Pitest
+    implementation 'org.pitest:pitest-junit5-plugin:1.0.0'
+    implementation(
+            'org.springframework.boot:spring-boot-starter',
+            'org.springframework.boot:spring-boot-starter-web',
+            // Für Spock
+            'org.apache.groovy:groovy:4.0.7',
+            'org.apache.groovy:groovy'
+    )
+
+    testImplementation(
+            'org.springframework.boot:spring-boot-starter-test',
+            // Für Spock
+            'org.spockframework:spock-spring:2.4-M1-groovy-4.0',
+            'org.spockframework:spock-core:2.4-M1-groovy-4.0',
+            'org.spockframework:spock-junit4'
+    )
+
+    testImplementation platform('org.spockframework:spock-bom:2.3-groovy-4.0')
+
+    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+}
+
+pitest {
+    targetClasses = ['com.example.lurttesting.*']
+    threads = 4
+    // More Mutations == Higher Strength
+//    mutators=['ALL']
+    outputFormats = ['HTML']
+    timestampedReports = true
+    jvmArgs.set(['-Xmx1024m'])
+    useClasspathFile.set(true)
+}
+
+test {
+    useJUnitPlatform()
+}
